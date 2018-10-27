@@ -8,7 +8,8 @@ def main():
 
     graph_analyzer = GraphAnalyser(graph)
     graph_analyzer.print_stats()
-    graph_analyzer.connected_components()
+    # graph_analyzer.connected_components()
+    graph_analyzer.degree()
 
 
 if __name__ == "__main__":

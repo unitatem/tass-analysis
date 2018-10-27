@@ -1,5 +1,6 @@
 import logging
 
+import matplotlib.pyplot as plt
 import networkx as nx
 
 logging.basicConfig(level=logging.DEBUG)
@@ -33,3 +34,19 @@ class GraphAnalyser:
         sub_graphs = nx.connected_component_subgraphs(self.graph)
         for sg in sub_graphs:
             self._stats(sg)
+
+    def degree(self):
+        logging.info("Degrees:")
+        degree_cnt = dict()
+
+        nodes_degrees = nx.degree(self.graph)
+        for _, d in nodes_degrees:
+            cnt = degree_cnt.get(d, 0)
+            degree_cnt[d] = cnt + 1
+
+        degree_cnt = [(d, c) for d, c in degree_cnt.items()]
+        degree_cnt = sorted(degree_cnt, key=lambda x: x[0])
+        print(degree_cnt)
+
+        plt.scatter(*zip(*degree_cnt))
+        plt.show()
