@@ -13,5 +13,5 @@ class GraphLoader:
                                  create_using=nx.Graph,
                                  nodetype=int,
                                  encoding="utf-8")
-        logging.info("finish reading")
+        logging.info("Finish reading")
         return graph

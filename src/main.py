@@ -6,8 +6,9 @@ from graph_loader import GraphLoader
 def main():
     graph = GraphLoader.load(graph_path)
 
-    analyzer = GraphAnalyser(graph)
-    analyzer.print_stats()
+    graph_analyzer = GraphAnalyser(graph)
+    graph_analyzer.print_stats()
+    graph_analyzer.connected_components()
 
 
 if __name__ == "__main__":
