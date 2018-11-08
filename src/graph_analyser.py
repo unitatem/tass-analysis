@@ -3,6 +3,7 @@ import networkx as nx
 import numpy as np
 
 from config import enable_plotter
+from sklearn import linear_model
 
 
 class GraphAnalyser:
@@ -38,14 +39,35 @@ class GraphAnalyser:
     def rank_plot(self):
         print("Rank plot")
 
+        # TODO bins
+
+        degrees = self.get_degree_sequence()
+        nodes_cnt = len(degrees)
+
+        x_log = np.log([i for i in range(1, nodes_cnt + 1)])
+        assert len(x_log) == nodes_cnt
+        x_log.shape = (nodes_cnt, 1)
+
+        y_log = np.log(degrees)
+        y_log.shape = (nodes_cnt, 1)
+
+        model = linear_model.LinearRegression()
+        model.fit(x_log, y_log)
+
+        print('DEBUG coefficients: ', model.coef_)
+        print('DEBUG intercept: ', model.intercept_)
+
+        # minus because exponential function equals C * exp(-alpha)
+        alpha = -model.coef_[0][0]
+        print("alpha: ", alpha)
+
         if enable_plotter:
             plt.loglog(self.get_degree_sequence(), 'b')
             plt.title("Degree rank plot")
             plt.ylabel("degree")
             plt.xlabel("rank")
+            plt.grid()
             plt.show()
-
-        return 0
 
     def get_degree_sequence(self):
         if self._degree_sequence is None:
@@ -58,9 +80,9 @@ class GraphAnalyser:
         k_alpha = list()
         degrees = self.get_degree_sequence()
         nodes_cnt = len(degrees)
-        for consider_cnt in range(1, nodes_cnt + 1):
-            if consider_cnt % 1000 == 0:
-                print("progress:", consider_cnt / nodes_cnt)
+        for consider_cnt in range(2, nodes_cnt + 1):
+            if consider_cnt % 8000 == 0:
+                print("progress: %.2f" % (consider_cnt / nodes_cnt))
 
             x = np.sum(np.log(degrees[nodes_cnt - consider_cnt:]))
             gamma = x / consider_cnt - np.log(degrees[nodes_cnt - consider_cnt])
@@ -76,4 +98,5 @@ class GraphAnalyser:
             plt.title("Hill diagram")
             plt.ylabel("alpha")
             plt.xlabel("k")
+            plt.grid()
             plt.show()

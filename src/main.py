@@ -8,8 +8,9 @@ def main():
 
     graph_analyzer = GraphAnalyser(graph)
     graph_analyzer.print_stats()
-    # graph_analyzer.connected_components()
-    # graph_analyzer.rank_plot()
+    graph_analyzer.connected_components()
+
+    graph_analyzer.rank_plot()
     graph_analyzer.hill_plot()
 
 
