@@ -1,17 +1,14 @@
-import logging
-
 import networkx as nx
-
-logging.basicConfig(level=logging.DEBUG)
 
 
 class GraphLoader:
+    @staticmethod
     def load(path):
-        logging.info("Start reading")
+        print("Start reading")
         graph = nx.read_edgelist(path,
                                  delimiter=',',
                                  create_using=nx.Graph,
                                  nodetype=int,
                                  encoding="utf-8")
-        logging.info("Finish reading")
+        print("Finish reading")
         return graph

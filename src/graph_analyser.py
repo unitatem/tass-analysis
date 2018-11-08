@@ -1,52 +1,79 @@
-import logging
-
 import matplotlib.pyplot as plt
 import networkx as nx
+import numpy as np
 
-logging.basicConfig(level=logging.DEBUG)
+from config import enable_plotter
 
 
 class GraphAnalyser:
     def __init__(self, graph):
         self.graph = graph
+        self._degree_sequence = None
 
     def print_stats(self):
-        logging.info("Graph stats:")
+        print("Graph stats:")
         self._stats(self.graph)
 
     @staticmethod
     def _stats(g):
-        logging.info("nodes_cnt (rzad) = {nodes} edges_cnt (rozmiar) = {edges}"
-                     .format(nodes=g.number_of_nodes(),
-                             edges=g.number_of_edges()))
+        print("nodes_cnt (rzad) = {nodes} edges_cnt (rozmiar) = {edges}"
+              .format(nodes=g.number_of_nodes(),
+                      edges=g.number_of_edges()))
 
     def connected_components(self):
-        logging.info("Connected components:")
-        logging.info("total = {cnt}".format(cnt=nx.number_connected_components(self.graph)))
+        print("Connected components:")
+        print("total = {cnt}".format(cnt=nx.number_connected_components(self.graph)))
 
         max_sub_graphs = max(nx.connected_component_subgraphs(self.graph), key=len)
         self._stats(max_sub_graphs)
 
     def all_connected_components(self):
-        logging.info("All connected components:")
-        logging.info("total = {cnt}".format(cnt=nx.number_connected_components(self.graph)))
+        print("All connected components:")
+        print("total = {cnt}".format(cnt=nx.number_connected_components(self.graph)))
 
         sub_graphs = nx.connected_component_subgraphs(self.graph)
         for sg in sub_graphs:
             self._stats(sg)
 
-    def degree(self):
-        logging.info("Degrees:")
-        degree_cnt = dict()
+    def rank_plot(self):
+        print("Rank plot")
 
-        nodes_degrees = nx.degree(self.graph)
-        for _, d in nodes_degrees:
-            cnt = degree_cnt.get(d, 0)
-            degree_cnt[d] = cnt + 1
+        if enable_plotter:
+            plt.loglog(self.get_degree_sequence(), 'b')
+            plt.title("Degree rank plot")
+            plt.ylabel("degree")
+            plt.xlabel("rank")
+            plt.show()
 
-        degree_cnt = [(d, c) for d, c in degree_cnt.items()]
-        degree_cnt = sorted(degree_cnt, key=lambda x: x[0])
-        print(degree_cnt)
+        return 0
 
-        plt.scatter(*zip(*degree_cnt))
-        plt.show()
+    def get_degree_sequence(self):
+        if self._degree_sequence is None:
+            self._degree_sequence = sorted([degree for node, degree in self.graph.degree()], reverse=True)
+        return self._degree_sequence
+
+    def hill_plot(self):
+        print("Hill plot")
+
+        k_alpha = list()
+        degrees = self.get_degree_sequence()
+        nodes_cnt = len(degrees)
+        for consider_cnt in range(1, nodes_cnt + 1):
+            if consider_cnt % 1000 == 0:
+                print("progress:", consider_cnt / nodes_cnt)
+
+            x = np.sum(np.log(degrees[nodes_cnt - consider_cnt:]))
+            gamma = x / consider_cnt - np.log(degrees[nodes_cnt - consider_cnt])
+
+            if gamma == 0.0:
+                k_alpha.append(0.0)
+                continue
+            alpha = 1.0 + 1.0 / gamma
+            k_alpha.append(alpha)
+
+        if enable_plotter:
+            plt.plot(k_alpha, 'b')
+            plt.title("Hill diagram")
+            plt.ylabel("alpha")
+            plt.xlabel("k")
+            plt.show()
