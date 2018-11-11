@@ -1,8 +1,9 @@
 # Project
-**/__pycache__
 **/.~lock*
-**/*.pajek
+**/*.net
+**/*.rep
 
 # PyCharm
 .idea
+**/__pycache__
 
