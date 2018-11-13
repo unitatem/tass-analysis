@@ -5,14 +5,14 @@ from graph_loader import GraphLoader
 
 def main():
     graph = GraphLoader.load(graph_path)
-    GraphLoader.export_pajek(graph, pajek_export_path)
+    # GraphLoader.export_pajek(graph, pajek_export_path)
 
     graph_analyzer = GraphAnalyser(graph)
     graph_analyzer.print_stats()
     graph_analyzer.connected_components()
 
-    graph_analyzer.degrees_plot()
-    graph_analyzer.rank_plot()
+    graph_analyzer.degree_plot()
+    graph_analyzer.degree_rank_log_regression()
     graph_analyzer.hill_plot()
 
 
