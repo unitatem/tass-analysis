@@ -72,8 +72,8 @@ class GraphAnalyser:
         ccdf = s - cdf
         yy = ccdf
 
-        xx = xx[:-1]
-        yy = yy[:-1]
+        xx = np.array(xx)
+        yy = np.array(yy) + 1
         samples_cnt = len(yy)
 
         x_log = np.log10(xx)
