@@ -137,18 +137,18 @@ class GraphAnalyser:
         print("Hill plot")
 
         k_alpha = list()
-        degrees = sorted([degree for node, degree in self.graph.degree()], reverse=True)
-        print(degrees)
-        nodes_cnt = len(degrees)
-        for consider_cnt in range(2, nodes_cnt + 1):
-            if consider_cnt % 8000 == 0:
-                print("progress: %.2f" % (consider_cnt / nodes_cnt))
+        degree_sequence = sorted([degree for node, degree in self.graph.degree()])
+        degree_cnt = dict(Counter(degree_sequence))
+        degree_cnt = sorted(list(degree_cnt.values()), reverse=True)
+        print(degree_cnt)
 
-            x = np.sum(np.log(degrees[:consider_cnt]))
-            gamma = x / consider_cnt - np.log(degrees[consider_cnt - 1])
+        nodes_cnt = len(degree_cnt)
+        for consider_cnt in range(2, nodes_cnt + 1):
+            x = np.sum(np.log(degree_cnt[:consider_cnt]))
+            gamma = x / consider_cnt - np.log(degree_cnt[consider_cnt - 1])
             alpha = 1.0 + 1.0 / gamma
 
-            if consider_cnt % 10000 == 0 and consider_cnt >= 40000:
+            if consider_cnt % 25 == 0 and consider_cnt >= 100:
                 print("alpha(k = {k}) = {alpha}".format(k=consider_cnt,
                                                         alpha=alpha))
             k_alpha.append(alpha)
